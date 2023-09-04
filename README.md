@@ -1,2 +1,4 @@
 # STAT4130J_2023_summer
-上海交通大学密西根学院STAT4130J课程
+Course STAT4130J Applied Regression Analysis of Joint Institute of Shanghai Jiao Tong University
+
+Please follow the Honor Code and don't copy my works.
