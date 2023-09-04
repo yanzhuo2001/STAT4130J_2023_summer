@@ -1,0 +1,67 @@
+---
+title: "413HW2P3"
+author: "Yanzhuo Cao"
+date: "2023-06-14"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ISLR2)
+data(Carseats)
+```
+
+## Question a
+
+```{r}
+model <- lm(Sales ~ Price + Urban + US, data = Carseats)
+summary(model)
+```
+
+## Question b
+
+[Price: The coefficient for Price represents the expected change in Sales for a one-unit increase in Price, holding all other variables constant. A negative coefficient indicates that an increase in Price is associated with a decrease in Sales, assuming all other factors are constant.]
+
+[Urban: The coefficient for Urban is a binary variable. It represents the expected difference in Sales between an urban location (Urban = 1) and a non-urban location (Urban = 0), holding all other variables constant. A negative coefficient suggests that Sales is lower in urban locations compared to non-urban locations.]
+
+[US: The coefficient for US is also a binary variable. It represents the expected difference in Sales between a product manufactured in the US (US = 1) and a product manufactured outside the US (US = 0), holding all other variables constant. A positive coefficient indicates that Sales are higher for products manufactured in the US.]
+
+## Question c
+
+[Sales = $\beta_0$ + $\beta_1$ * Price + $\beta_2$ * UrbanYes + $\beta_3$ * USYes + e, or to say Sales = 13.043469 - 0.054459 * Price - 0.021916 * UrbanYes + 1.200573 * USYes + e]
+
+## Question d
+
+[From the results in (a), we can reject the null hypothesis H0: $\beta_j$ = 0 for Price and US predictors because their corresponding p-values are less than 0.05. However, we cannot reject the null hypothesis for the Urban predictor as its p-value is not significant.]
+
+## Question e
+
+[Based on the significant predictors from part (d), we can fit a smaller model that includes only Price and US as predictors.]
+
+```{r}
+model1 <- lm(Sales ~ Price + US, data = Carseats)
+summary(model1)
+```
+
+## Question f
+[The smaller model (Sales ~ Price + US) has an R-squared of 0.2393, indicating that approximately 23.93% of the variance in Sales is explained by the predictors. The Adjusted R-squared is 0.2354, which accounts for the number of predictors and sample size.]
+
+[Comparing the model fit statistics between the full model (from part (a)) and the smaller model, the R-squared and Adjusted R-squared values remain the same, suggesting that removing the Urban predictor did not significantly affect the overall model fit.]
+
+## Question g
+```{r}
+confint(model1)
+```
+
+## Question h
+```{r}
+plot(model1)
+```
+
+[We find that the residuals in the residual vs. fitted values plot appear to be randomly distributed, it indicates that the model fits the data well and there are no significant patterns or outliers in the residuals.]
+
+[We find that the points in the normal Q-Q plot roughly fall along a straight line, it suggests that the residuals approximately follow a normal distribution.]
+
+[There is no clear pattern observed in the standardized residuals vs. fitted values plot, it indicates that the assumption of constant variance (homoscedasticity) is likely satisfied.]
+
+[There are high leverage observations are identified in the leverage plot, it suggests that these particular data points have a strong influence on the regression model.  These observations exert a significant impact on the estimated coefficients, potentially affecting the overall model fit.It is important to further investigate these high leverage points to determine if they are influential outliers or if they represent genuine characteristics of the data.  Additionally, consideration should be given to whether these observations should be retained or removed from the model based on their impact on the model's assumptions and objectives.]

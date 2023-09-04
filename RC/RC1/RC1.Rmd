@@ -1,0 +1,284 @@
+---
+title: "RC1_Basic"
+author: "Haohong Shang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Introduction to R and Rstudio
+## Intro to Rstudio
+### How to "write" using Rmarkdown
+Create a new file through **File -> New File -> Rmarkdown**. Prefer choosing **HTML** as the default output format.
+You can not start a new line without adding an extra blank line above.
+
+Start a new line like this.  
+Or you could add 2 or more spaces at the end of the last line to start a new line like this.
+
+Press **"Knit"** button to see how this page is rendered. If you have *LaTeX* compiler on your computer, you may change the "output" to be **_"pdf_document"_** so that Rstudio will generate a pdf file using *LaTeX*.
+
+For *LaTeX* equations, you may add an inline equation like this: $y = \beta_0+\beta_1x$, and add a display equation like this:
+$$y = \beta_0+\beta_1x$$.
+
+Insert images like this:  
+![alt text](help_table.jpg)
+
+You can find many helpful markdown reference here. Make sure that the image you insert should be in the folder where you save this .Rmd file. Otherwise, use absolute path.
+
+
+## Intro to R
+### Create a new R code chunk by pressing Ctrl+Alt+I
+```{r}
+# This is a R code chunk. Make sure you have ```{r} at the top of the chunk and ``` at the bottom.
+# install.packages("ggplot2")
+library(ggplot2) # Import library like this. If you don't have this package yet, install it using the code above. You can directly type this command in the Console below. Click "Packages" on your right panel to see what packages you've already installed.
+
+# Run the code in the current chunk by clicking the green triangle at the top-right corner of this chuck.
+# If you want to run only part of codes within a chunk(in the case where you don't want to reload the data again), select the corresponding code lines first, and then press Ctrl+Enter.
+```
+
+
+### Vectors(IMPORTANT)
+* Create a vector: c() for concatenate
+* Case of missing values: NA (not available) and NaN (not a number)
+* Get a subset of a vector: my_vector[i] to get the ith element, **STARTING FROM 1**.
+* Calculations with vectors: max(x), min(x), range(x), length(x), sum(x), mean(x), prod(x) (product of the elements in x), sd(x) (standard deviation), var(x) (variance), sort(x), order(x)
+```{r}
+# Create a numeric vector
+vec = c(5, 3, 1, 6, 4, 2, 7, 9) # Basically no difference between "=" and "<-"
+vec[1] # No need to use print()
+vec[1:3] # First 3 elements
+vec[c(2,4)] # The 2nd and 4th element of vec: 3, 6
+# DIFFERENT FROM PYTHON!!!
+vec[c(-2, -4)] # Not choose the 2nd and 4th element of vec: 5, 1, 4, 2
+len = length(vec) # The length of vec
+vec[len] # The last element of vec
+# So far there are 2 variables created. You can find their info in the "Environment" on the right panel.
+
+# Other ways to create vectors
+v1 = c(1:8)
+v1
+v2 = seq(from = 3, to = 21, by =2)
+v2
+v3 = rep(5, 4) # rep(value, repeat_times)
+v3
+v4 = rep(v1, 2)
+v4
+v1 + vec # Add operation
+c(v1, vec) # Concatenation
+v1 = c(v1, 100) # Append
+```
+
+
+### Matrices
+* Create and naming matrix: matrix(), cbind(), rbind(), rownames(), colnames()
+* Check and convert: is.matrix(), as.matrix()
+* Transpose a matrix: t()
+* Dimensions of a matrix: ncol(), nrow(), dim()
+* Get a subset of a matrix: my_data[row, col]
+* Calculations with numeric matrices: rowSums(), colSums(), rowMeans(), colMeans(), apply()
+* Matrix product: %*%
+```{r}
+v5 = c(1:6)
+m1 = matrix(v5, nrow=2, byrow=TRUE)
+m1
+m2 = matrix(v5, nrow=2, byrow=FALSE)
+m2
+rowname = c("r1", "r2")
+colname = c("c1", "c2", "c3")
+m3 = matrix(v5, nrow=2, dimnames = list(rowname, colname)) # Default: byrow=FALSE
+m3
+t(m3) # Transform
+m3[1, 2] # [row, col]
+m3[1,] # First row
+m3[,2] # Second col
+
+m1*m3 # Element-by-element multiplication
+m1 %*% t(m3) # Matrix multiplication
+
+m4 = cbind(v1, vec) # Column bind
+m4
+m5 = rbind(v1, vec) # Row bind
+m5
+```
+
+
+### DataFrame and Data Loading
+Data.frame is a very special data structure in R. 
+```{r}
+data(iris) # Load data from R
+dim(iris) # row, col. Could also be accessed by using nrow() and ncol() respectively.
+head(iris) # View the data of the top 6 rows of the dataset
+tail(iris, 3) # View the last 3 rows of the dataset
+names(iris) # The names of each column
+vec_species = iris$Species # Access the data of column "Species" by using $
+vec_species[1] # Treat it as a vector
+str(iris) #Structure
+summary(iris)
+table(iris$Species)
+unique(iris$Species)
+View(iris) # View the data in Rstudio. You could also double click this data in the "Environment" on the right panel.
+```
+
+If you want to get subdataset with Species='setosa', try **which** function.
+```{r}
+id = which(iris$Species=='setosa') # Return a vector of row index
+iris_setosa = iris[id,]
+iris_setosa = iris_setosa[,-5] # drop the 5th col 
+head(iris_setosa)
+```
+
+The elements can be called as usually in matrix or by attribute name.
+```{r}
+iris[3,4]
+iris$Petal.Length[4]
+```
+
+Basic operation functions.
+```{r}
+max(iris$Sepal.Length)
+min(iris$Sepal.Length)
+which.max(iris$Sepal.Length)
+mean(iris$Sepal.Length)
+median(iris$Sepal.Length)
+sd(iris$Sepal.Length)
+```
+
+Load data from .csv file and create a new data.frame.
+```{r}
+data = read.csv("fuel2001.csv") # Load data
+head(data)
+Fuel = 1000*data$FuelC/data$Pop
+Dlic = 1000*data$Drivers/data$Pop
+newdata = data.frame(Fuel, data$Tax, Dlic, data$Income, log(data$Miles)) # Create a new data.frame
+newdata$MPC = data$MPC # Append a new column
+head(newdata)
+```
+
+
+### Basic graphs
+
+R is very convenient to generate figures. Here are some basic graphics functions in R.
+
+```{r}
+pairs(iris) # Pairwise scatterplot
+pairs(iris[1:3]) # Only use first 3 cols
+pairs(~iris$Sepal.Length + iris$Petal.Length + iris$Petal.Width) # Choose specific cols
+par(mfrow=c(2,2)) # Let the following 4 plots be displayed together within a 2*2 block
+hist(iris$Sepal.Length)
+boxplot(iris$Sepal.Length)
+boxplot(iris)
+plot(iris$Sepal.Length, iris$Petal.Length, xlab = "this is the x-axis",
+    ylab = "this is the y-axis",
+    main = "Plot of X vs Y")
+```
+
+Functions mentioned above could handle most of the graph-plotting problems in your homeworks. The professor also introduced how to use ggplot2 in the lecture and gave out its document link. You can learn it by yourself. At the end of this page, I list some of its usage that is introduced in UM's lab for your reference.
+
+
+### If-else and for loop
+```{r}
+set.seed(1) # Set seed for random
+for(i in c(1:3)){
+  x1 = runif (100, min=-1, max=1) # runif() creates 100 samples from uniform distribution between range -1 to 1
+  x2 = i * x1 + rnorm (100, mean=0, sd=1) / 10 # rnorm() create from normal distribution with mean=0 and standard_deviation=1
+  y = 2 + 2 * x1 + 0.3 * x2 + rnorm (100)
+  if(i != 2){
+    plot(y, x1)
+    abline(a = -0.5, b=1/4) # a is intercept, b is slope
+    # https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/abline
+  }
+}
+```
+
+
+### **ggplot2** package
+
+The library ggplot2 offers a plotting system with substantial capabilities and nicer graphics than the base plotting functions.
+
+```{r c2}
+# install.packages("ggplot2") 
+# if you don't have this package, you need to install it.
+library(ggplot2)
+```
+
+#### Geometric objects and aesthetics
+Building blocks of a graph include: data, **aesthetic mapping**, **geometric object**, statistical transformations, scales, coordinate system, position adjustments and faceting.
+
+**Aesthetic Mapping**: something you can see, for example, position, color, fill, shape, linetype, size and so on. Aesthetic mappings are set with the aes() function.
+
+**Geometic Objects**: the actual marks we  put on a plot, for example, points(geom_point), lines(geom_line), histograms(geom_histogram).
+
+#### Examples:
+
+```{r c3}
+#load data
+data_crime = read.table("city_crime.txt", header = TRUE)
+head(data_crime)
+```
+
+qplot() is a function which stands for quick plot. It has a lot of syntax which is similar to plot().
+
+```{r c4}
+plot(x = data_crime$Robbery, y = data_crime$Assault, xlab = 'Robbery', ylab = 'Assault', main = 'Crime')
+```
+
+```{r c5}
+qplot(x = Robbery, y = Assault, data = data_crime, xlab = 'Robbery', ylab = 'Assault', main = 'Crime')
+```
+
+A plot must have at least one geom. 
+```{r c6}
+crime_plot <- ggplot(data = data_crime,aes(x = Robbery, y = Assault))
+
+# scatterplot by using geom_point()
+crime_plot + geom_point()
+# lines
+crime_plot + geom_line()
+#color and size
+crime_plot + geom_point(aes(color = Murder, size = Larceny))
+
+crime_plot + geom_point(aes(color = Murder)) + 
+  scale_colour_gradient(high = "red", low = "blue") + theme_bw()
+
+#text
+crime_plot + geom_text(aes(label=rownames(data_crime)), check_overlap = TRUE)
+```
+
+After creating your basic graph, what if you want to add a title, adjust the size of text?
+
+```{r c7}
+crime_plot <- ggplot(data = data_crime) + geom_point(aes(x = Robbery, y = Assault, color = Murder))
+crime_plot <- crime_plot + labs(title = "Crime", x = 'Robbery', y = 'Assualt') 
+crime_plot + theme(text = element_text(size=20))
+# just change size of title
+crime_plot + theme(plot.title = element_text(size = 20))
+# annotate our graph
+crime_plot + geom_abline(intercept = 1500, slope = -0.5) + 
+  geom_text(aes(x = c(1500), y = c(800), label = c('separating hyperplane')), size = 5)
+```
+
+Pairs plots are useful to visualize multiple variables at the same time. The base function is **pairs**, but here is an example with **ggplot**.
+
+```{r c8,message=FALSE}
+#install.packages('GGally')
+library(GGally)
+crime_pairs = ggpairs(data_crime,axisLabels = "none",
+        upper = list(continuous = "points", combo = "dot"),
+        lower = list(continuous = "cor", combo = "dot"),
+        diag = list(continuous = "densityDiag")) + 
+  theme_bw()
+crime_pairs
+```
+
+#### 3D plots
+
+Sometimes it is useful to create 3D plots to visualize multivariate data. The library **plotly** can do so.
+
+```{r c9,message=FALSE}
+#install.packages('plotly')
+library(plotly)
+p = plot_ly(data_crime, x = ~Robbery, y = ~Assault, z = ~Murder,color=~Larceny)
+p
+```
+
+

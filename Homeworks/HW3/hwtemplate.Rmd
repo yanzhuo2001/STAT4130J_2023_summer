@@ -1,0 +1,42 @@
+---
+title: "STAT 4130: Homework (Template)"
+author: "Your name"
+date: '2023-05-27'
+output: pdf_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+# if you are using libraries, it's good practice to load them here
+```
+
+## Question 1
+
+```{r}
+# please do your coding inside a code chunk
+# unless otherwise stated, feel free to do all computations in R
+# commented code is always appreciated
+
+#print("Hello")
+```
+
+#### 1a. 
+[Write out your response as text, outside of code chunks/comments]
+
+#### 1b. 
+[...]
+
+#### 1c.
+[...]
+
+## Question 2
+```{r problem2Code}
+# Your code
+```
+
+
+## Question 3
+```{r problem3Code}
+# Your Code
+```
+

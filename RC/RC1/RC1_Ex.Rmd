@@ -1,0 +1,37 @@
+---
+title: "RC1_Exercise"
+author: "Haohong Shang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+### Auto data
+* Load the Auto dataset from *Auto.csv* using the read.csv() function. Show the top 5 rows.
+* Make a boxplot of *cylinders* versus *mpg* and a histogram of *mpg*. Display them in the same row.
+* Set the seed to be 100. Generate a vector *x_0* from standard normal distribution. The length should be equal to the row number of Auto.
+* Make 4 scatterplots within a 2\*2 block. Points within each plot should be in gray color. Use a for-loop with parameter **i** from 4 to 1. Within each plot (5-i), **x** should be the vector "weight" of *Auto.csv*; and **y** should be equal to i\*x_0 + i^2. Append a blue dash line with line width=2. Make the title of each plot (5-i) to be "Figure (5-i)". Your output should be similar to the picture below. You may need to search for the usage the function **paste()** and **abline()**.
+* Type the formula "y = i\*x_0 + i^2" using LaTeX in display mode(i.e. at the center).
+![](Plot_ex.jpg)
+
+$$y = i*x_0 + i^2$$
+
+
+```{r}
+data = read.csv("Auto.csv")
+head(data, 5)
+par(mfrow=c(1,2))
+boxplot(data$cylinders, data$mpg)
+hist(data$mpg)
+
+set.seed(100)
+x = rnorm(dim(data)[1])
+par(mfrow=c(2,2))
+for (i in c(4:1)){
+  y = i*x + i^2
+  plot(data$weight, y, xlab = paste("i=", i), main = paste("Figure", 5-i), col="gray")
+  m = mean(y)
+  abline(h = m, col="blue", lty=4, lwd=2)
+}
+
+```
+

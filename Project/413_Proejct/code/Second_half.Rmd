@@ -1,0 +1,62 @@
+---
+title: "413_Project_second_half"
+author: "Ang Li"
+date: "2023_07_18"
+output:
+  pdf_document:
+    latex_engine: xelatex
+  html_document: default
+---
+
+Import data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(sjPlot)
+data <- read.csv("Housing_Price.csv")
+```
+
+We've come up with a good model in the first half. 
+
+```{r}
+new_data0 <- data[, c("Price", "Bedrooms", "Bathrooms", "AreaNet", "Latitude", "PropertySubType", "Parish")]
+lm0 <- lm(Price ~ poly(Bedrooms, 5, raw = TRUE) + poly(Bathrooms, 5, raw = TRUE) + poly(AreaNet, 5, raw = TRUE) + Bedrooms:Bathrooms + Bedrooms:AreaNet + Bathrooms:AreaNet + log(AreaNet) + Latitude + PropertySubType + Parish, data = new_data0)
+summary(lm0)
+```
+
+```{r}
+lm1 <- lm(Price ~ poly(Bedrooms, 2, raw = TRUE) + poly(Bathrooms, 3, raw = TRUE) + poly(AreaNet, 4, raw = TRUE) + Latitude + PropertySubType + Parish, data = new_data0)
+lm2 <- lm(Price ~ poly(Bedrooms, 2, raw = TRUE) + poly(Bathrooms, 2, raw = TRUE) + poly(AreaNet, 4, raw = TRUE) + Latitude + PropertySubType + Parish, data = new_data0)
+anova(lm2,lm1)
+```
+
+
+```{r}
+lm1 <- lm(Price ~ poly(Bedrooms, 2, raw = TRUE) + poly(Bathrooms, 3, raw = TRUE) + poly(AreaNet, 4, raw = TRUE) + Latitude + PropertySubType + Parish, data = new_data0)
+
+resid <- lm1$residuals
+hist(resid)
+
+removed_rows <- which(abs(resid) >= 2*sd(resid))
+
+new_data1 <- new_data0[-removed_rows,]
+cat("Removed rows:", removed_rows, "\n")
+print(new_data0[removed_rows,])
+cat("\n")
+
+lm2 <- lm(Price ~ poly(Bedrooms, 2, raw = TRUE) + poly(Bathrooms, 3, raw = TRUE) + poly(AreaNet, 4, raw = TRUE) + Latitude + PropertySubType + Parish, data = new_data1)
+
+summary(lm2)
+```
+
+```{r}
+summary(lm2)
+```
+
+```{r}
+ggplot(new_data1, aes(y = Price)) +
+  geom_boxplot()
+```
+
+

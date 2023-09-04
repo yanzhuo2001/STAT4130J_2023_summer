@@ -1,0 +1,180 @@
+---
+title: "RC2"
+author: "Haohong Shang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+**This is adapted from UM's lab material. For the usage of lm() function, you may refer to the RC1_2.Rmd file under folder RC1.**
+
+## Categorical predictors
+### 2-level categorical predictors
+We first consider a binary categorical predictor into simple linear regression. 
+
+- A typical appearance for such predictor is the answer from 'Yes'/'No' questionnaire. 
+- For example, let '$x$' be a binary predictor indicating whether you are from Michigan or not.
+- The convention is to treat them as 0/1 indicators. That is, we label 'yes' as $1$, while 'no' as $0$. (Sometimes the other way around..)
+
+Consider the following model
+\[
+y_i = \beta_0 + \beta_1 x_i + \varepsilon_i,
+\]
+where $x_i$ only takes 0 or 1, indicating the binary predictor. This means 
+\[
+y_i = 
+\begin{cases}
+\beta_0 + \beta_1 + \varepsilon_i,& \text{if } x_i = 1\\
+\beta_0 + \varepsilon_i,& \text{if } x_i = 0
+\end{cases}
+\]
+
+- What's the interpretation of $\beta_0$ and $\beta_1$?
+- $\beta_1$: The average difference in $Y$ between the two categories.
+- $\beta_0$: The average of $Y$ for the baseline group (Here baseline is x_i = 0).
+
+Following the same strategy in lecture, we can derive the expression for the estimator $\widehat{\beta}_0$ and $\widehat{\beta}_1$. Let $\bar{Y}_1$ be the sample average of $y_i$ among those $x_i = 1$, while $\bar{Y}_0$ be the sample average of $y_i$ among $x_i = 0$. 
+
+\begin{eqnarray*}
+\widehat{\beta}_0 &=& \bar{Y}_0\\
+\widehat{\beta}_1 &=& \bar{Y}_1 - \bar{Y}_0
+\end{eqnarray*}
+
+- Does those expressions seems intuitive?
+- What would happen if we label `Yes` as 2 and `No` as 0?
+
+To see a real-world application, we turn to the `Credit` dataset from the `ISLR` package. The data set records information on credit card clients. We first try to model `Balance` using a binary predictor `Student`.
+
+- `Balance` records the average credit balance for a client
+- `Student` is binary, representing whether the user is a student or not.
+- A summary of the variable `Student` shows it's indeed categorical.
+```{r c1}
+library(ISLR)
+data(Credit)
+summary(Credit$Student)
+plot(Balance~Student, data = Credit)
+```
+
+Then we can fit a simple linear regression model of `Balance~Student`.
+```{r c2}
+fit1 = lm(Balance~Student, data = Credit)
+summary(fit1)
+```
+- Is the coefficient for 'Student' significant?
+- While `R` implement the regression above, how do we know if 'Yes' = 1 or 'No' = 1? 
+
+We can easily verify that the estimated values have the desired interpreration.
+```{r c3}
+beta0.hat = mean(Credit$Balance[Credit$Student == 'No'])
+beta1.hat = mean(Credit$Balance[Credit$Student == 'Yes']) - mean(Credit$Balance[Credit$Student == 'No'])
+c(beta0.hat,beta1.hat)
+coef(fit1)
+```
+
+If we would like to put 'Yes' as our baseline instead, the function `relevel` comes handy. 
+```{r c4}
+fit2 = lm(Balance~relevel(Student, ref = 'Yes'), data = Credit)
+summary(fit2)
+```
+
+Another way of doing this is adjusting the order of the levels first.
+```{r c4.1}
+levels(Credit$Student)
+Credit$MyStudent =  factor(Credit$Student, levels = c("Yes", "No"))
+levels(Credit$MyStudent)
+
+fit2.1 = lm(Balance~MyStudent , data = Credit)
+summary(fit2.1)
+```
+
+- The `level` function reveals all the possible levels of a categorical variable \textbf{in order}. 
+- The `factor` function creates a categorical variable in `R` with the specified level names \textbf{in order}.
+
+### Multiple regression
+Now let's try to include some other continuous variable in the model.
+```{r c5}
+fit3 = lm(Balance~Student + Income + Rating + Age, data = Credit)
+summary(fit3)
+```
+
+- How would you interpret the coefficient for `Student` now?
+
+## Multi-level categorical predictor
+Now let's consider the case with more than two levels. First we take a look at the variable `Ethnicity`. 
+```{r c6}
+summary(Credit$Ethnicity)
+plot(Balance ~ Ethnicity , data = Credit)
+```
+
+- There are three levels.
+- There does not seem to be a significant relationship between the balance and ethnicity.
+- Would indexing `Ethnicity` as a integer of 0/1/2 work like the binary case?
+
+To incorporate this, we introduce a set of 'dummy' variables. Suppose $x$ has $d$ distinct levels denoted as $f_1,\ldots,f_d$ (They are not numeric!). Let $z_1,\ldots,z_{d-1}$ be $d-1$ binary (dummy) variables that are:
+\[
+z_k = 
+\begin{cases}
+1,& \text{if }x = f_k\\
+0,& \text{Otherwise}
+\end{cases}
+\]
+Then we fit the regression as if we use those $d-1$ dummy variables $z_1,\ldots,z_{d-1}$ instead of the original categorical variable $x$ in the linear regression. 
+
+- The dummy $z_k$ indicates whether $x$ takes the $k$-th value $f_k$ or not.
+- Why are there only $d-1$ dummy variables?
+- At most one of the dummies $z_k$ will equal to 1.
+- When all the $d-1$ dummies are $0$, we immediately know $x = f_k$.
+- The level $f_d$ serves as the baseline.
+
+Now let's see how that works in practice.
+```{r c7}
+fit4 = lm(Balance~ Ethnicity, data = Credit)
+summary(fit4)
+```
+
+- Which level is the baseline?
+- Now, the coefficients represents the average difference with the \textbf{baseline} level.
+- Does it appear to be a significant difference between each ethnicity?
+
+Alternatively, we can create our own 0/1 valued dummy variables.
+```{r c8}
+Credit$AfAmer <- as.numeric(Credit$Ethnicity == 'African American') 
+Credit$Asian <- as.numeric(Credit$Ethnicity == 'Asian') 
+Credit$Cauc <- as.numeric(Credit$Ethnicity == 'Caucasian') 
+table(Credit$AfAmer)
+```
+
+- The `==` operator in `R` compares the left and right hand side, returning a logical value TRUE/FALSE.
+- In our case, it returns a vector of the same length as `Credit$Ethnicity`.
+- The `as.numeric` convert those logical variable to 1/0.
+
+Suppose we use `African American` as the baseline level. Fitting a linear regression using our dummies gives the same result.
+```{r c9}
+fit5 = lm(Balance~ Asian + Cauc, data = Credit)
+coef(fit5)
+coef(fit4)
+```
+
+Of course we can involve more predictors in the model.
+```{r c10}
+fit6 = lm(Balance~ Ethnicity + Student + Income + Rating + Age, data = Credit)
+summary(fit6)
+```
+
+- Note the interpretation of the 'intercept' terms now involves the baseline of `Ethnicity` and `Student`.
+
+## Interactions
+We will briefly introduce the interaction effect. An interaction term between two variables $x_1$ and $x_2$ means the product term $x_1\cdot x_2$. For example, a linear regression with predictor $x_1$, $x_2$ and their interaction is:
+\[
+y = \beta_0 + x_1\beta_{1} + x_2\beta_2 + x_1x_2\beta_3 +  \varepsilon
+\]
+
+- This is particularly interesting when $x_1$ is categorical (binary).
+- Intuitively, the marginal effect of $x_2$ depend on the level of $x_1$.
+
+Let's look at the interaction between `Student` and `Rating`.
+```{r c11}
+fit7 = lm(Balance ~ Income + Student + Rating + Student:Rating , data = Credit)
+summary(fit7)
+```
+
+- The colon `:` represents the two-way interaction
+- Alternatively we can use `Student*Rating` to represent both the main effect and the interaction: `Income + Rating + Student:Rating`.

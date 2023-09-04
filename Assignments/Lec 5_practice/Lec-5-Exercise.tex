@@ -1,0 +1,378 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Lec 5 Exercise},
+  pdfauthor={Ailin Zhang},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Lec 5 Exercise}
+\author{Ailin Zhang}
+\date{2023-05-18}
+
+\begin{document}
+\maketitle
+
+\hypertarget{auto-data}{%
+\subsection{Auto data}\label{auto-data}}
+
+Let's load the \texttt{auto.txt} to start the exploration
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Auto }\OtherTok{=} \FunctionTok{read.table}\NormalTok{(}\StringTok{"auto.txt"}\NormalTok{, }\AttributeTok{header=}\NormalTok{T)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{model-building}{%
+\subsection{Model building}\label{model-building}}
+
+Please construct two linear models \texttt{lm1} and \texttt{lm2}. In
+\texttt{lm1}, regress acceleration on weight only. In \texttt{lm2},
+regress acceleration on both weight and horsepower. Compare the
+coefficients for weight in \texttt{lm1} and \texttt{lm2}. What do you
+find? (Hint: do heavier cars require more or less time to accelerate
+from 0 to 60 mph?)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lm1 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(acceleration }\SpecialCharTok{\textasciitilde{}}\NormalTok{ weight, }\AttributeTok{data =}\NormalTok{ Auto)}
+\NormalTok{lm2 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(acceleration }\SpecialCharTok{\textasciitilde{}}\NormalTok{ weight }\SpecialCharTok{+}\NormalTok{ horsepower, }\AttributeTok{data =}\NormalTok{ Auto)}
+\NormalTok{coef\_lm1 }\OtherTok{\textless{}{-}} \FunctionTok{coef}\NormalTok{(lm1)[}\StringTok{"weight"}\NormalTok{]}
+\NormalTok{coef\_lm2 }\OtherTok{\textless{}{-}} \FunctionTok{coef}\NormalTok{(lm2)[}\StringTok{"weight"}\NormalTok{]}
+\NormalTok{coef\_lm1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       weight 
+## -0.001353896
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{coef\_lm2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     weight 
+## 0.00230182
+\end{verbatim}
+
+\textbf{Answer to the question}: When only consider the weight, we can
+find that the coefficient of weight is negative, which means that the
+heavier cars will require less time to accelerate. However, if we
+consider both weight and horsepower, we can find that the coefficient of
+weight is positive, which means that the heavier cars will require more
+time to accelerate.
+
+\hypertarget{effect-of-weight-controlling-for-other-predictors}{%
+\subsection{\texorpdfstring{Effect of weight \textbf{Not} Controlling
+for Other
+Predictors}{Effect of weight  Controlling for Other Predictors}}\label{effect-of-weight-controlling-for-other-predictors}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: 程辑包'ggplot2'是用R版本4.2.3 来建造的
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(Auto, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{weight, }\AttributeTok{y=}\NormalTok{acceleration)) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Lec-5-Exercise_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+From the scatter plot above, are weight and acceleration are positively
+or negatively associated? Do heavier vehicles generally require more or
+less time to accelerate from 0 to 60 mph?
+
+\textbf{Answer to the question}: From the scatter plot above, I think
+that weight and acceleration are negatively associated. Heavier vehicles
+generally require less time to accelerate from 0 to 60 mph
+
+\hypertarget{effect-of-weight-controlling-for-horsepower}{%
+\subsection{Effect of weight Controlling for
+horsepower}\label{effect-of-weight-controlling-for-horsepower}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(Auto, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{weight, }\AttributeTok{y=}\NormalTok{acceleration, }\AttributeTok{col=}\NormalTok{horsepower)) }\SpecialCharTok{+}
+\FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{scale\_color\_gradientn}\NormalTok{(}\AttributeTok{colours =} \FunctionTok{rainbow}\NormalTok{(}\DecValTok{5}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Lec-5-Exercise_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+You can also visualize this by creating subplots for data with similar
+horsepower
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Auto}\SpecialCharTok{$}\NormalTok{hp }\OtherTok{=} \FunctionTok{cut}\NormalTok{(Auto}\SpecialCharTok{$}\NormalTok{horsepower,}
+\AttributeTok{breaks=}\FunctionTok{c}\NormalTok{(}\DecValTok{45}\NormalTok{,}\DecValTok{70}\NormalTok{, }\DecValTok{80}\NormalTok{, }\DecValTok{90}\NormalTok{,}\DecValTok{100}\NormalTok{,}\DecValTok{110}\NormalTok{, }\DecValTok{130}\NormalTok{, }\DecValTok{150}\NormalTok{,}\DecValTok{230}\NormalTok{),}
+\AttributeTok{labels=}\FunctionTok{c}\NormalTok{(}\StringTok{"hp\textless{}=70"}\NormalTok{, }\StringTok{"70 \textless{} hp \textless{}= 80"}\NormalTok{, }\StringTok{"80 \textless{} hp \textless{}= 90"}\NormalTok{,}
+\StringTok{"90 \textless{} hp \textless{}= 100"}\NormalTok{, }\StringTok{"100 \textless{} hp \textless{}= 110"}\NormalTok{,}
+\StringTok{"110 \textless{} hp \textless{}= 130"}\NormalTok{,}
+\StringTok{"130 \textless{} hp \textless{}= 150"}\NormalTok{, }\StringTok{"hp \textgreater{} 150"}\NormalTok{))}
+\FunctionTok{ggplot}\NormalTok{(Auto, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{weight, }\AttributeTok{y=}\NormalTok{acceleration, }\AttributeTok{col=}\NormalTok{horsepower)) }\SpecialCharTok{+}
+\FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{scale\_color\_gradientn}\NormalTok{(}\AttributeTok{colours =} \FunctionTok{rainbow}\NormalTok{(}\DecValTok{5}\NormalTok{)) }\SpecialCharTok{+}
+\FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{hp, }\AttributeTok{nrow=}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{"top"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Lec-5-Exercise_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+Consider car models of similar horsepower (similar color), are weight
+and acceleration positively or negatively correlated?
+
+\textbf{Answer to the question}: Consider car models of similar
+horsepower, weight and acceleration are positively correlated.
+
+Now, can you explain why the association between acceleration and weight
+is flipped from positive to negative when horsepower is ignored?
+
+\hypertarget{lets-revisit-the-problem-with-another-approach}{%
+\subsection{Let's revisit the problem with another
+approach}\label{lets-revisit-the-problem-with-another-approach}}
+
+Step 1. Regress acceleration on horsepower. Let RY be the residuals of
+this model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Step 1}
+\NormalTok{model1 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(acceleration }\SpecialCharTok{\textasciitilde{}}\NormalTok{ horsepower, }\AttributeTok{data =}\NormalTok{ Auto)}
+\FunctionTok{summary}\NormalTok{(model1)  }\CommentTok{\# Display model coefficients and statistics}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = acceleration ~ horsepower, data = Auto)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.9947 -1.2913 -0.1748  1.1229  7.6053 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 20.70193    0.29274   70.72   <2e-16 ***
+## horsepower  -0.04940    0.00263  -18.78   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.002 on 390 degrees of freedom
+## Multiple R-squared:  0.475,  Adjusted R-squared:  0.4736 
+## F-statistic: 352.8 on 1 and 390 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{RY }\OtherTok{\textless{}{-}} \FunctionTok{residuals}\NormalTok{(model1)}
+\end{Highlighting}
+\end{Shaded}
+
+Step 2. Regress weight on horsepower. Let RWT be the residuals of this
+model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Step 2}
+\NormalTok{model2 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(weight }\SpecialCharTok{\textasciitilde{}}\NormalTok{ horsepower, }\AttributeTok{data =}\NormalTok{ Auto)}
+\FunctionTok{summary}\NormalTok{(model2)  }\CommentTok{\# Display model coefficients and statistics}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = weight ~ horsepower, data = Auto)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2191.1  -297.7   -80.1   330.8  1150.8 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 984.5003    62.5143   15.75   <2e-16 ***
+## horsepower   19.0782     0.5616   33.97   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 427.4 on 390 degrees of freedom
+## Multiple R-squared:  0.7474, Adjusted R-squared:  0.7468 
+## F-statistic:  1154 on 1 and 390 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{RWT }\OtherTok{\textless{}{-}} \FunctionTok{residuals}\NormalTok{(model2)}
+\end{Highlighting}
+\end{Shaded}
+
+Step 3. Regress RY on RWT.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Step 3}
+\NormalTok{model3 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(RY }\SpecialCharTok{\textasciitilde{}}\NormalTok{ RWT)}
+\FunctionTok{summary}\NormalTok{(model3)  }\CommentTok{\# Display model coefficients and statistics}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = RY ~ RWT)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.2802 -1.1236 -0.2544  0.9128  7.1814 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 7.352e-17  8.804e-02    0.00        1    
+## RWT         2.302e-03  2.065e-04   11.15   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.743 on 390 degrees of freedom
+## Multiple R-squared:  0.2416, Adjusted R-squared:  0.2397 
+## F-statistic: 124.3 on 1 and 390 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+Does any of the coefficient above look familiar? Explain your findings!
+
+\textbf{Answer to the question}: In Step 1, the regression model between
+acceleration and horsepower indicates that the coefficient of horsepower
+is -0.04940. This is a negative correlation, which is consistent with
+our intuitive understanding of the acceleration performance of the car.
+
+In Step 2, the regression model between weight and horsepower shows a
+coefficient of 19.0782 for horsepower. This is a positive relationship,
+implying an association between higher horsepower and heavier cars.
+
+In Step 3, the regression model of RY (residual from step 1) to RWT
+(residual from step 2) shows a coefficient of 2.302e-03 for RWT.
+However, the coefficient of this association is very small, close to
+zero, and thus not very practical.
+
+Taken together, these coefficients provide some information on the
+relationship between horsepower, weight, and acceleration. They support
+our common sense understanding of car performance that horsepower has a
+positive effect on acceleration, while weight has a negative effect on
+acceleration. At the same time, the coefficients in Step 3 indicate that
+the association between residuals is relatively weak after accounting
+for the effects of horsepower and weight, indicating that the
+explanatory power of the model may be limited.
+
+\end{document}

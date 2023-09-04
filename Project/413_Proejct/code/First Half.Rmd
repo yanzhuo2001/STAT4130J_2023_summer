@@ -1,0 +1,239 @@
+---
+title: "413_Project"
+author: "Yanzhuo Cao"
+date: "2023_07_10"
+output:
+  pdf_document:
+    latex_engine: xelatex
+  html_document: default
+---
+
+Import data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(sjPlot)
+data <- read.csv("Housing_Price.csv")
+```
+
+Do a simple linear regression to see if the import data is successful.
+
+```{r}
+lm1=lm(Price ~ Bedrooms + Bathrooms + AreaNet + AreaGross + Parking + Latitude + Longitude + Price_Sq._M., data=data)
+summary(lm1)
+```
+
+Now we have successfully imported the data, then we need to process the data. Since there is no missing value, so we just need to transform the variables. That is, transform datatype "String" to "Real". In our dataset, we need to focus on "Condition" "PropertyType" "PropertySubType" "Parish".
+
+See Lec_9 page 10 for detail, as for short, Used + New + As New + For Refurbishment = 1;
+
+```{r}
+data$Condition = factor(data$Condition, labels=c("Used","New","'As_New'","For_Refurbishment"))
+data$PropertyType = factor(data$PropertyType, labels=c("Homes","Single_Habitation"))
+data$PropertySubType = factor(data$PropertySubType, label=c("Apart_Hotel","Apartment","Duplex","Dwelling","Isolated_Villa","Penthouse","Studio","Townhouse_Dwelling"))
+data$Parish = factor(data$Parish, labels=c("Ajuda","Alcantara","Alvalade","Areeiro","Arroios","Avenidas_Novas","Beato","Belem","Benfica","Campo_de_Ourique","Campolide","Carnide","Estrela","Lumiar","Marvila","Misericordia","Olivais","Parque_das_Nacoes","Penha_de_Franca","Santa_Clara","Santa_Maria_Maior","Santo_Antonio","Sao_Domingos_de_Benfica","Sao_Vicente"))
+```
+
+Now we do the regression on all variables.
+
+```{r}
+lm2=lm(Price ~ Bedrooms + Bathrooms + AreaNet + AreaGross + Parking + Latitude + Longitude + Price_Sq._M. + Condition + PropertyType + PropertySubType + Parish, data=data)
+summary(lm2)
+```
+
+From the result of regression, we can notice that the result of AreaGross is NA, suggesting that it has strong linear relationship with other variables, so we need to find the other variable which has strong linear relationship with it.
+
+```{r}
+for (variable in names(data)[-1]) {
+  print(ggplot(data, aes(x = AreaGross, y = get(variable))) +
+    geom_point() +
+    labs(title = paste("Scatter Plot: AreaGross vs", variable),
+         x = "AreaGross",
+         y = variable) +
+    theme_minimal())
+}
+```
+
+From the plot above, we can notice that AreaGross has strong linear relationship with AreaNet. To prove this, we can do the linear regression between this two variables.
+
+```{r}
+lmTest=lm(AreaNet ~ AreaGross, data=data)
+summary(lmTest)
+```
+
+From the R_squared value, we can conclude that these two variables have strong linear relationship with each other, so we just need to use one of them. Therefore, we will do another regression deleting some NA variables and Pr|t|>0.1 variables shown in the above regression.
+
+```{r}
+new_data0 <- data[, c("Price", "Bedrooms", "Bathrooms", "AreaNet", "Latitude", "PropertySubType", "Parish")]
+lm3 <- lm(Price ~ Bedrooms + Bathrooms + AreaNet + PropertySubType + Parish, data = new_data0)
+summary(lm3)
+```
+We can see that the r squared dropped a little, so we further use F_Test to decide if we will accept the reduced model.
+
+```{r}
+anova(lm3, lm2)
+```
+
+From the table above, we can see that Pr(>F) of the reduced model is less than 0.05, which is acceptable for us to use the reduced model.
+
+Notice that although some subvaribales like ParishAvenidas_Novas also has significant influence on the model, we cannot just deleting other Parish subvariables and keep some significant variables, since the dataset we use will change (we will only focus on data whose Parish column is Avenidas_Novas or Santa_Maria_Maior and etc.). Therefore, the following data is meaningless in a way.
+
+```{r}
+new_data1 <- data[, c("Price", "Bedrooms", "Bathrooms", "AreaNet", "Latitude", "PropertySubType", "Parish")]
+
+new_data1 <- new_data1[new_data1$Parish %in% c("Avenidas_Novas", "Santa_Maria_Maior", "Santa_Clara"),]
+
+lm4 <- lm(Price ~ Bedrooms + Bathrooms + AreaNet + PropertySubType + Parish, data = new_data1)
+
+summary(lm4)
+```
+
+From now on, our first model has been established with name lm3, then we will analyze it using graph methods.
+
+```{r}
+plot(lm3, which = 1)
+```
+
+According to the Residual Plot above, we can notice that the variance of residuals increases as Fitted value getting large, with some outliers.
+
+To exclude the points with high leverage, we need to first find them and do the regression again.
+
+```{r}
+leverage <- hatvalues(lm3)
+high_leverage_points <- which(leverage > mean(leverage) + 2 * sd(leverage))
+print(high_leverage_points)
+```
+
+```{r}
+new_data2 <- subset(new_data0, !row.names(new_data0) %in% c("15", "20", "50", "51", "52", "127", "128", "141", "155", "167", "188", "203", "245"))
+
+lm5 <- lm(Price ~ Bedrooms + Bathrooms + AreaNet + PropertySubType + Parish, data = new_data2)
+summary(lm5)
+```
+
+Further more, we will do QQ_Plot to check if the standardized residual obey normal distribution.
+
+```{r}
+plot(lm5, which = 2)
+```
+
+From the plot we can notice that beside three outliers (point 150,196,145), the other residuals basically obey the normal distribution since they are almost on a straight line and ranges from (_2,2).
+
+In order to know if the outliers have great influence on the regression model, we can use the Leverage Plot.
+
+```{r}
+plot(lm5, which = 5)
+# calculate the F_statistic value with df = (p+1, n-p-1) degrees of freedom to decide whether the Cook’s Distance is large
+a=qf(0.5, 33, 212)
+print(a)
+```
+
+From the plot we can notice that beside point 145, all the other outliers won't do much influence on the regression model. Also, the critical value of the Cook's Distance is almost 1, which is still larger than that of point 145 and 196. Therefore, it is also reasonable if we don't ignore this point.
+
+To improve our first model, we decided to exclude point 145, 150, 196,246 because these points have large standardized residual or Cook's distance.
+
+```{r}
+new_data3 <- subset(new_data2, !row.names(new_data2) %in% c("145","196","150","246"))
+
+lm6 <- lm(Price ~ Bedrooms + Bathrooms + AreaNet + PropertySubType + Parish, data = new_data3)
+summary(lm6)
+```
+
+In order to see if our model has been improved, we can further more print the above plots.
+
+```{r}
+plot(lm6, which = 1)
+plot(lm6, which = 2)
+plot(lm6, which = 5)
+```
+
+Now we can see that there is new outlier named point 23, we can further improve our model by excluding it.
+
+```{r}
+new_data3 <- subset(new_data2, !row.names(new_data2) %in% c("15", "20", "50", "51", "52", "127", "128", "141", "155", "167", "188", "203", "245","145","196","150","23"))
+
+lm6 <- lm(Price ~ Bedrooms + Bathrooms + AreaNet + PropertySubType + Parish, data = new_data3)
+summary(lm6)
+```
+
+```{r}
+plot(lm6, which = 1)
+plot(lm6, which = 2)
+plot(lm6, which = 5)
+```
+
+Then we plot the predicted value plot and compare them with the real data.
+
+```{r}
+# 绘制预测值曲线
+plot_model(lm6, type = "pred", terms = c("Bedrooms"))
+plot_model(lm6, type = "pred", terms = c("Bathrooms"))
+plot_model(lm6, type = "pred", terms = c("AreaNet"))
+plot_model(lm6, type = "pred", terms = c("PropertySubType"))
+plot_model(lm6, type = "pred", terms = c("Parish"))
+```
+
+
+```{r}
+# 绘制预测值与观测值曲线
+plot_model(lm6, type = "pred", terms = c("Bedrooms")) +
+  geom_point(data = new_data3, aes(x = Bedrooms, y = Price), color = "blue")
+plot_model(lm6, type = "pred", terms = c("Bathrooms")) +
+  geom_point(data = new_data3, aes(x = Bedrooms, y = Price), color = "blue")
+plot_model(lm6, type = "pred", terms = c("AreaNet")) +
+  geom_point(data = new_data3, aes(x = Bedrooms, y = Price), color = "blue")
+plot_model(lm6, type = "pred", terms = c("PropertySubType")) +
+  geom_point(data = new_data3, aes(x = Bedrooms, y = Price), color = "blue")
+plot_model(lm6, type = "pred", terms = c("Parish")) +
+  geom_point(data = new_data3, aes(x = Bedrooms, y = Price), color = "blue")
+
+```
+
+但是其实效果并不好，因为真实值和预测值完全对不上。。。最后写report的时候可以不用这个图
+
+Then we plot the Heat map to visualize the degree of variable influence ---- with reder colors indicating greater influence.
+
+```{r}
+# 提取回归模型的系数（变量影响度）
+coefficients <- coef(lm6)[-1]  # 去除截距
+
+# 构建数据框
+heatmap_data <- data.frame(variable = names(coefficients),
+                           impact = abs(coefficients))
+
+# 按照影响度从高到低排序
+heatmap_data <- heatmap_data[order(heatmap_data$impact, decreasing = TRUE), ]
+
+# 绘制热力图
+ggplot(heatmap_data, aes(x = variable, y = "", fill = impact)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "red") +
+  labs(x = "Variable", y = "") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+
+
+
+
+Now we can see from the regression result that the R squared value is 0.88, from residuals plot that the residuals seems randomly assigned, from QQ_Plot that standardized residual ranges from (_3,3), from leverage plot that no points have cook's distance larger than 0.5, which suggests that our first model is acceptable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
